@@ -1,0 +1,1 @@
+{"level":"INFO","time":"2026-02-25T19:37:57.289+0800","caller":"util/logger.go:68","msg":"/health","status":200,"method":"GET","path":"/health","query":"","ip":"::1","user-agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36","errors":"","cost":0.000258625}
