@@ -9,8 +9,8 @@ import (
 type BasicHandler struct {
 }
 
-func NewBasicHandler() BasicHandler {
-	return BasicHandler{}
+func NewBasicHandler() *BasicHandler {
+	return &BasicHandler{}
 }
 
 // Health

@@ -7,6 +7,11 @@ import (
 	"demoProject/config"
 	"demoProject/internal/api"
 	"demoProject/internal/app"
+	"demoProject/internal/infra"
+	"demoProject/internal/infra/mysql"
+	"demoProject/internal/infra/redis"
+	"demoProject/internal/repo"
+	"demoProject/internal/service"
 
 	"github.com/google/wire"
 )
@@ -19,32 +24,35 @@ func InitConfig() (*config.Config, error) {
 	return nil, nil
 }
 
-func InitServer(cfg *config.Config) (*app.Server, error) {
+func InitServer(cfg *config.Config) (*app.Server, func(), error) {
 	wire.Build(
-		
-		//// db
-		//mysql.InitDB,
-		//
-		//// redis
-		//redis.InitRedis,
+
+		// db
+		mysql.InitDB,
+
+		// redis
+		redis.InitRedis,
 
 		// resources
-		//app.NewResources,
-
-		// repo
-
-		// service
-
-		// handler
-		api.NewBasicHandler,
+		infra.NewResources,
 
 		// gin-engine & router
 		app.NewEngine,
 		app.NewRouter,
 
+		// handler
+		api.NewBasicHandler,
+		api.NewUserHandler,
+
+		// service
+		service.NewUserService,
+
+		// repo
+		repo.NewMysqlUserRespository,
+
 		// server
 		app.NewServer,
 	)
 
-	return nil, nil
+	return nil, nil, nil
 }

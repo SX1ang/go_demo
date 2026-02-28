@@ -1,0 +1,87 @@
+basePath: /v1
+definitions:
+  dto.SignUpReq:
+    properties:
+      email:
+        type: string
+      gender:
+        description: Gender填0值，required validation失败
+        enum:
+        - 1
+        - 2
+        type: integer
+      password:
+        maxLength: 64
+        minLength: 8
+        type: string
+      re_password:
+        maxLength: 64
+        minLength: 8
+        type: string
+      username:
+        maxLength: 32
+        minLength: 3
+        type: string
+    required:
+    - email
+    - gender
+    - password
+    - re_password
+    - username
+    type: object
+  util.JsonResult:
+    properties:
+      code:
+        type: integer
+      data:
+        description: omitempty表示在序列化成 JSON 时，如果字段的值是零值（例如 nil、""、0、false、空切片/空 map），自动省略该字段
+      msg:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: yinshouxiang.email@gmail.com
+    name: yesongxi
+  description: go web demo project
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Go Web Demo Project's API
+  version: "1.0"
+paths:
+  /health:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"msg":"success"}'
+          schema:
+            type: string
+      summary: 探活接口
+  /v1/signup:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 注册请求信息
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SignUpReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.JsonResult'
+      summary: 用户注册
+      tags:
+      - User
+swagger: "2.0"
+tags:
+- description: 用户相关接口
+  name: User

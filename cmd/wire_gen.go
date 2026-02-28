@@ -10,6 +10,11 @@ import (
 	"demoProject/config"
 	"demoProject/internal/api"
 	"demoProject/internal/app"
+	"demoProject/internal/infra"
+	"demoProject/internal/infra/mysql"
+	"demoProject/internal/infra/redis"
+	"demoProject/internal/repo"
+	"demoProject/internal/service"
 )
 
 // Injectors from wire.go:
@@ -22,10 +27,27 @@ func InitConfig() (*config.Config, error) {
 	return configConfig, nil
 }
 
-func InitServer(cfg *config.Config) (*app.Server, error) {
+func InitServer(cfg *config.Config) (*app.Server, func(), error) {
 	engine := app.NewEngine()
 	basicHandler := api.NewBasicHandler()
-	router := app.NewRouter(basicHandler)
+	db, err := mysql.InitDB(cfg)
+	if err != nil {
+		return nil, nil, err
+	}
+	client, err := redis.InitRedis(cfg)
+	if err != nil {
+		return nil, nil, err
+	}
+	resources, cleanup, err := infra.NewResources(db, client)
+	if err != nil {
+		return nil, nil, err
+	}
+	iUserRepo := repo.NewMysqlUserRespository(resources)
+	iUserService := service.NewUserService(iUserRepo)
+	userHandler := api.NewUserHandler(iUserService)
+	router := app.NewRouter(basicHandler, userHandler)
 	server := app.NewServer(engine, router, cfg)
-	return server, nil
+	return server, func() {
+		cleanup()
+	}, nil
 }

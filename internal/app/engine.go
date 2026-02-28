@@ -1,13 +1,14 @@
 package app
 
 import (
-	"demoProject/pkg/util"
+	"demoProject/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
 func NewEngine() *gin.Engine {
 	engine := gin.New()
-	engine.Use(util.GinLogger(), util.GinRecovery(true))
+	engine.Use(middleware.GinLogger())
+	engine.Use(middleware.GinRecovery(true))
 	return engine
 }
