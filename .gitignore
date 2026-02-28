@@ -1,2 +1,3 @@
-./app_demo.log
+*.log
 ./config/config.yaml
+.idea/
