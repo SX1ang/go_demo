@@ -2,6 +2,7 @@ package util
 
 import (
 	"demoProject/config"
+	"os"
 
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
@@ -21,7 +22,18 @@ func InitLogger(cfg *config.Config) (err error) {
 	if err != nil {
 		return
 	}
-	core := zapcore.NewCore(encoder, writeSyncer, l)
+
+	var core zapcore.Core
+	if cfg.App.Mode == "dev" {
+		// 开发模式下日志同时输出到控制台和文件
+		consoleEncoder := zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())
+		core = zapcore.NewTee(
+			zapcore.NewCore(encoder, writeSyncer, l),
+			zapcore.NewCore(consoleEncoder, zapcore.AddSync(zapcore.Lock(os.Stdout)), l),
+		)
+	} else {
+		core = zapcore.NewCore(encoder, writeSyncer, l)
+	}
 
 	lg := zap.New(core, zap.AddCaller())
 	zap.ReplaceGlobals(lg) // 替换zap包中全局的logger实例，后续在其他包中只需使用zap.L().Debug()调用即可

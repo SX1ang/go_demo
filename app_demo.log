@@ -106,3 +106,9 @@
 {"level":"INFO","time":"2026-02-28T18:23:40.736+0800","caller":"middleware/gin_logger.go:26","msg":"/swagger/doc.json","status":200,"method":"GET","path":"/swagger/doc.json","query":"","ip":"::1","user-agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36","errors":"","cost":0.001058}
 {"level":"INFO","time":"2026-02-28T18:23:40.749+0800","caller":"middleware/gin_logger.go:26","msg":"/swagger/favicon-32x32.png","status":200,"method":"GET","path":"/swagger/favicon-32x32.png","query":"","ip":"::1","user-agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36","errors":"","cost":0.000089542}
 {"level":"INFO","time":"2026-02-28T18:23:56.907+0800","caller":"app/server.go:51","msg":"Shutting down server...\n"}
+{"level":"ERROR","time":"2026-03-04T10:56:54.553+0800","caller":"api/user.go:34","msg":"SignUpHandler","error":"Key: 'SignUpReq.RePassword' Error:Field validation for 'RePassword' failed on the 'min' tag"}
+{"level":"INFO","time":"2026-03-04T10:56:54.555+0800","caller":"middleware/gin_logger.go:26","msg":"/v1/signup","status":200,"method":"POST","path":"/v1/signup","query":"","ip":"::1","user-agent":"PostmanRuntime/7.51.1","errors":"","cost":0.002517917}
+{"level":"INFO","time":"2026-03-04T10:57:01.853+0800","caller":"app/server.go:51","msg":"Shutting down server...\n"}
+{"level":"INFO","time":"2026-03-04T11:02:09.221+0800","caller":"app/server.go:51","msg":"Shutting down server...\n"}
+{"level":"INFO","time":"2026-03-04T11:02:36.190+0800","caller":"app/server.go:51","msg":"Shutting down server...\n"}
+{"level":"INFO","time":"2026-03-04T11:02:43.914+0800","caller":"app/server.go:51","msg":"Shutting down server...\n"}

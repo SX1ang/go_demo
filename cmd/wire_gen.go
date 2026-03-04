@@ -28,7 +28,7 @@ func InitConfig() (*config.Config, error) {
 }
 
 func InitServer(cfg *config.Config) (*app.Server, func(), error) {
-	engine := app.NewEngine()
+	engine := app.NewEngine(cfg)
 	basicHandler := api.NewBasicHandler()
 	db, err := mysql.InitDB(cfg)
 	if err != nil {
