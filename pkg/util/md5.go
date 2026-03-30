@@ -12,3 +12,4 @@ func EncodeMD5(value string) string {
 
 	return hex.EncodeToString(m.Sum(nil))
 }
+

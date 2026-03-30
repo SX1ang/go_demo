@@ -53,3 +53,34 @@ func (u *UserHandler) SignUpHandler(c *gin.Context) {
 	// 3.返回响应
 	c.JSON(http.StatusOK, util.JsonRsp("ok"))
 }
+
+// LoginHandler
+// @Summary 用户登录
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param data body dto.LoginReq true "登录请求信息"
+// @Success 200 {object} util.JsonResult
+// @Router /v1/login [post]
+func (u *UserHandler) LoginHandler(c *gin.Context) {
+	// 获取参数和参数校验
+	var req = new(dto.LoginReq)
+	if err := c.ShouldBindJSON(req); err != nil {
+		zap.L().Error("LoginHandler", zap.String("username", req.Username), zap.Error(err))
+		c.JSON(http.StatusOK, util.JsonRsp(&util.CustomizedErr{
+			Code: e.INVALID_PARAMS,
+			Msg:  e.GetMsg(e.INVALID_PARAMS),
+		}))
+		return
+	}
+
+	// 登录逻辑处理
+	ctx := c.Request.Context()
+	if err := u.userService.Login(ctx, req); err != nil {
+		c.JSON(http.StatusOK, util.JsonRsp(err))
+		return
+	}
+
+	// 返回响应
+	c.JSON(http.StatusOK, util.JsonRsp("ok"))
+}

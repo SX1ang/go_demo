@@ -31,6 +31,7 @@ func main() {
 	// generate a struct and specify struct's name
 	g.ApplyBasic(
 		g.GenerateModel("user"),
+		g.GenerateModel("session"),
 	)
 
 	// execute the action of code generation

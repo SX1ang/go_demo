@@ -56,3 +56,32 @@ func (u *UserService) SignUp(ctx context.Context, req *dto.SignUpReq) error {
 
 	return nil
 }
+
+func (u *UserService) Login(ctx context.Context, req *dto.LoginReq) error {
+	// 验证用户名和密码
+	user, err := u.userRepo.GetUser(ctx, req.Username)
+	if err != nil {
+		return &util.CustomizedErr{
+			Code: e.ERROR,
+			Msg:  err.Error(),
+		}
+	}
+
+	if user == nil {
+		return &util.CustomizedErr{
+			Code: e.INVALID_CREDENTIALS,
+			Msg:  e.GetMsg(e.INVALID_CREDENTIALS),
+		}
+	}
+
+	if user.Password != util.EncodeMD5(req.Password) {
+		return &util.CustomizedErr{
+			Code: e.INVALID_CREDENTIALS,
+			Msg:  e.GetMsg(e.INVALID_CREDENTIALS),
+		}
+	}
+
+	
+
+	return nil
+}

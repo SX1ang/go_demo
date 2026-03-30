@@ -4,6 +4,7 @@ import (
 	"demoProject/internal/api"
 
 	_ "demoProject/docs"
+
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
@@ -33,4 +34,5 @@ func (r *Router) With(engine *gin.Engine) {
 
 	entityGroup := engine.Group("v1")
 	entityGroup.POST("/signup", r.user.SignUpHandler)
+	entityGroup.POST("/login", r.user.LoginHandler)
 }

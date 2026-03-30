@@ -51,3 +51,23 @@ func (m *MysqlUserRespository) AddUser(ctx context.Context, user *model.User) er
 
 	return nil
 }
+
+func (m *MysqlUserRespository) GetUser(ctx context.Context, username string) (*model.User, error) {
+	q := query.Use(m.db)
+
+	// 用表对象的 WithContext
+	user, err := q.User.
+		WithContext(ctx).
+		Where(q.User.Username.Eq(username)).
+		First()
+
+	if err == nil {
+		return user, nil
+	}
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil
+	}
+
+	return user, err
+}

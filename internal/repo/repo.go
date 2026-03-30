@@ -8,4 +8,5 @@ import (
 type IUserRepo interface {
 	UserIsExist(ctx context.Context, username string) (bool, error)
 	AddUser(ctx context.Context, user *model.User) error
+	GetUser(ctx context.Context, username string) (*model.User, error)
 }

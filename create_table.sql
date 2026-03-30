@@ -13,3 +13,13 @@ CREATE TABLE `user` (
     UNIQUE KEY `idx_user_id` (`user_id`) USING BTREE
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE `session` (
+    `session_id` varchar(255) PRIMARY KEY NOT NULL,
+    `user_id` bigint(20) NOT NULL,
+    `refresh_token` varchar(512) NOT NULL,
+    `is_revoked` BOOLEAN NOT NULL DEFAULT false,
+    `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+    `expires_at` timestamp NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
