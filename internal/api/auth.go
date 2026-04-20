@@ -24,7 +24,7 @@ func NewAuthHandler(authService service.IAuthService) *AuthHandler {
 // @Tags Auth
 // @Accept json
 // @Produce json
-// @Param data body dto.LogoutReq true "刷新access token请求信息"
+// @Param data body dto.RenewAccessTokenReq true "刷新access token请求信息"
 // @Success 200 {object} util.JsonResult
 // @Router /v1/token/renew [post]
 func (a *AuthHandler) RenewAccessTokenHandle(c *gin.Context) {

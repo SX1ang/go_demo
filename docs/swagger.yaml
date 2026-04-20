@@ -14,12 +14,12 @@ definitions:
     - password
     - username
     type: object
-  dto.LogoutReq:
+  dto.RenewAccessTokenReq:
     properties:
-      session_id:
+      refresh_token:
         type: string
     required:
-    - session_id
+    - refresh_token
     type: object
   dto.SignUpReq:
     properties:
@@ -91,7 +91,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/dto.LogoutReq'
+          $ref: '#/definitions/dto.RenewAccessTokenReq'
       produces:
       - application/json
       responses:
@@ -143,13 +143,6 @@ paths:
     post:
       consumes:
       - application/json
-      parameters:
-      - description: 注销请求信息
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/dto.LogoutReq'
       produces:
       - application/json
       responses:
@@ -157,6 +150,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/util.JsonResult'
+      security:
+      - BearerAuth: []
       summary: 用户注销
       tags:
       - User

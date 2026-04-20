@@ -91,7 +91,7 @@ func (u *UserHandler) LoginHandler(c *gin.Context) {
 // @Tags User
 // @Accept json
 // @Produce json
-// @Param data body dto.LogoutReq true "注销请求信息"
+// @Security BearerAuth
 // @Success 200 {object} util.JsonResult
 // @Router /v1/user/logout [post]
 func (u *UserHandler) LogoutHandler(c *gin.Context) {

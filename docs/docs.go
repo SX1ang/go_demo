@@ -57,7 +57,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.LogoutReq"
+                            "$ref": "#/definitions/dto.RenewAccessTokenReq"
                         }
                     }
                 ],
@@ -133,6 +133,11 @@ const docTemplate = `{
         },
         "/v1/user/logout": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -143,17 +148,6 @@ const docTemplate = `{
                     "User"
                 ],
                 "summary": "用户注销",
-                "parameters": [
-                    {
-                        "description": "注销请求信息",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.LogoutReq"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -218,13 +212,13 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.LogoutReq": {
+        "dto.RenewAccessTokenReq": {
             "type": "object",
             "required": [
-                "session_id"
+                "refresh_token"
             ],
             "properties": {
-                "session_id": {
+                "refresh_token": {
                     "type": "string"
                 }
             }
