@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func JWT() gin.HandlerFunc {
+func JWT(tokenMaker *util.JWTMaker) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.Request.Header.Get("Authorization")
 		if authHeader == "" {
@@ -28,18 +28,18 @@ func JWT() gin.HandlerFunc {
 			}))
 		}
 
-		mc, err := ParseToken(parts[1])
-		if err != nil {
-			c.JSON(http.StatusOK, gin.H{
-				"code": 2005,
-				"msg":  "无效的Token",
-			})
+		claims, err := tokenMaker.VerifyToken(parts[1])
+		if err != nil || claims.TokenType != util.TokenTypeAccessToken {
+			c.JSON(http.StatusOK, util.JsonRsp(&util.CustomizedErr{
+				Code: e.ERROR_AUTH_CHECK_TOKEN_FAIL,
+				Msg:  e.GetMsg(e.ERROR_AUTH_CHECK_TOKEN_FAIL),
+			}))
 			c.Abort()
 			return
 		}
-		// 将当前请求的username信息保存到请求的上下文c上
-		c.Set("username", mc.Username)
-		c.Next() // 后续的处理函数可以用过c.Get("username")来获取当前请求的用户信息
-	
+
+		// 将当前请求的UserId信息保存到请求的上下文c上
+		c.Set("UserId", claims.UserId)
+		c.Next() // 后续的处理函数可以用过c.Get("UserId")来获取当前请求的用户信息
 	}
 }

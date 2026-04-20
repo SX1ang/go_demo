@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 
+	"github.com/caarlos0/env/v11"
 	"github.com/spf13/viper"
 )
 
@@ -64,4 +65,20 @@ func InitConfig() (*Config, error) {
 	}
 
 	return &Cfg, nil
+}
+
+type EnvConfig struct {
+	SecretKey string `env:"SECRET_KEY" envDefault:"9f4b2d7a6c3e8f1a2b4c5d6e7f8091a2b3c4d5e6f7081920a1b2c3d4e5f60718"`
+}
+
+func InitEnvConfig() (*EnvConfig, error) {
+	var cfg EnvConfig
+	if err := env.Parse(&cfg); err != nil {
+		return nil, err
+	}
+	return &cfg, nil
+}
+
+func ProvideSecretKey(cfg *EnvConfig) string {
+	return cfg.SecretKey
 }

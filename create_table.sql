@@ -21,5 +21,6 @@ CREATE TABLE `session` (
     `refresh_token` varchar(512) NOT NULL,
     `is_revoked` BOOLEAN NOT NULL DEFAULT false,
     `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-    `expires_at` timestamp NULL
+    `expires_at` timestamp NULL,
+    UNIQUE KEY `uk_user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

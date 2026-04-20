@@ -15,6 +15,7 @@ import (
 	"demoProject/internal/infra/redis"
 	"demoProject/internal/repo"
 	"demoProject/internal/service"
+	"demoProject/pkg/util"
 )
 
 // Injectors from wire.go:
@@ -27,14 +28,14 @@ func InitConfig() (*config.Config, error) {
 	return configConfig, nil
 }
 
-func InitServer(cfg *config.Config) (*app.Server, func(), error) {
-	engine := app.NewEngine(cfg)
+func InitServer(configConfig *config.Config) (*app.Server, func(), error) {
+	engine := app.NewEngine(configConfig)
 	basicHandler := api.NewBasicHandler()
-	db, err := mysql.InitDB(cfg)
+	db, err := mysql.InitDB(configConfig)
 	if err != nil {
 		return nil, nil, err
 	}
-	client, err := redis.InitRedis(cfg)
+	client, err := redis.InitRedis(configConfig)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -43,10 +44,20 @@ func InitServer(cfg *config.Config) (*app.Server, func(), error) {
 		return nil, nil, err
 	}
 	iUserRepo := repo.NewMysqlUserRespository(resources)
-	iUserService := service.NewUserService(iUserRepo)
+	iSessionRepo := repo.NewMysqlSessionRespository(resources)
+	envConfig, err := config.InitEnvConfig()
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	string2 := config.ProvideSecretKey(envConfig)
+	jwtMaker := util.NewJWTMaker(string2)
+	iUserService := service.NewUserService(iUserRepo, iSessionRepo, jwtMaker)
 	userHandler := api.NewUserHandler(iUserService)
-	router := app.NewRouter(basicHandler, userHandler)
-	server := app.NewServer(engine, router, cfg)
+	iAuthService := service.NewAuthService(iSessionRepo, jwtMaker)
+	authHandler := api.NewAuthHandler(iAuthService)
+	router := app.NewRouter(basicHandler, userHandler, authHandler, jwtMaker)
+	server := app.NewServer(engine, router, configConfig)
 	return server, func() {
 		cleanup()
 	}, nil

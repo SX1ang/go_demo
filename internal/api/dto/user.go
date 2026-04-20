@@ -13,8 +13,16 @@ type LoginReq struct {
 	Password string `json:"password" binding:"required,min=8,max=64"`
 }
 
-type LoginUserRes struct {
-	UserID   int64  `json:"user_id"`
-	Username string `json:"username"`
-	Token    string `json:"token"`
+type LoginRes struct {
+	UserID        int64  `json:"user_id"`
+	Username      string `json:"username"`
+	SessionId     string `json:"session_id"`
+	AccessToken   string `json:"access_token"`
+	RefreshToken  string `json:"refresh_token"`
+	AccessExpire  int64  `json:"access_expire"`
+	RefreshExpire int64  `json:"refresh_expire"`
+}
+
+type LogoutReq struct {
+	UserId int64
 }

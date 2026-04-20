@@ -1,10 +1,6 @@
-//go:build !wireinject
-// +build !wireinject
-
 package main
 
 import (
-	"demoProject/config"
 	"demoProject/pkg/snowflake"
 	"demoProject/pkg/util"
 
@@ -28,15 +24,17 @@ import (
 // @tag.description 用户相关接口
 
 func main() {
-
 	snowflake.Init("2026-01-01", 1)
 
-	cfg, err := config.InitConfig()
+	cfg, err := InitConfig()
 	if err != nil {
 		panic(err)
 	}
 
-	util.InitLogger(cfg)
+	err = util.InitLogger(cfg)
+	if err != nil {
+		panic(err)
+	}
 	defer zap.L().Sync()
 
 	server, close, err := InitServer(cfg)

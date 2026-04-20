@@ -26,7 +26,7 @@ func NewUserHandler(userService service.IUserService) *UserHandler {
 // @Produce json
 // @Param data body dto.SignUpReq true "注册请求信息"
 // @Success 200 {object} util.JsonResult
-// @Router /v1/signup [post]
+// @Router /v1/user/signup [post]
 func (u *UserHandler) SignUpHandler(c *gin.Context) {
 	// 1.获取参数和参数校验
 	var req = new(dto.SignUpReq)
@@ -61,12 +61,12 @@ func (u *UserHandler) SignUpHandler(c *gin.Context) {
 // @Produce json
 // @Param data body dto.LoginReq true "登录请求信息"
 // @Success 200 {object} util.JsonResult
-// @Router /v1/login [post]
+// @Router /v1/user/login [post]
 func (u *UserHandler) LoginHandler(c *gin.Context) {
 	// 获取参数和参数校验
 	var req = new(dto.LoginReq)
 	if err := c.ShouldBindJSON(req); err != nil {
-		zap.L().Error("LoginHandler", zap.String("username", req.Username), zap.Error(err))
+		zap.L().Error("LoginHandler", zap.Any("LoginReq", req), zap.Error(err))
 		c.JSON(http.StatusOK, util.JsonRsp(&util.CustomizedErr{
 			Code: e.INVALID_PARAMS,
 			Msg:  e.GetMsg(e.INVALID_PARAMS),
@@ -76,7 +76,34 @@ func (u *UserHandler) LoginHandler(c *gin.Context) {
 
 	// 登录逻辑处理
 	ctx := c.Request.Context()
-	if err := u.userService.Login(ctx, req); err != nil {
+	res, err := u.userService.Login(ctx, req)
+	if err != nil {
+		c.JSON(http.StatusOK, util.JsonRsp(err))
+		return
+	}
+
+	// 返回响应
+	c.JSON(http.StatusOK, util.JsonRsp(res))
+}
+
+// LogoutHandler
+// @Summary 用户注销
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param data body dto.LogoutReq true "注销请求信息"
+// @Success 200 {object} util.JsonResult
+// @Router /v1/user/logout [post]
+func (u *UserHandler) LogoutHandler(c *gin.Context) {
+	// 获取参数和参数校验
+	var req = new(dto.LogoutReq)
+
+	req.UserId = c.MustGet("UserId").(int64)
+
+	// 注销逻辑处理
+	ctx := c.Request.Context()
+	err := u.userService.Logout(ctx, req)
+	if err != nil {
 		c.JSON(http.StatusOK, util.JsonRsp(err))
 		return
 	}

@@ -69,5 +69,5 @@ func (m *MysqlUserRespository) GetUser(ctx context.Context, username string) (*m
 		return nil, nil
 	}
 
-	return user, err
+	return nil, err
 }
