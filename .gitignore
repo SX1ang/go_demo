@@ -1,5 +1,4 @@
 *.log
-./config/config.yaml
-.idea
-./app
-cmd/gen/gen.go
+config/config.yaml
+.idea/
+app/
