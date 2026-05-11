@@ -13,8 +13,8 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:8080",
-    "basePath": "/v1",
+    "host": "localhost:8081",
+    "basePath": "/",
     "paths": {
         "/health": {
             "get": {
@@ -32,7 +32,61 @@
                 }
             }
         },
-        "/v1/token/renew": {
+        "/v1/communities": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Community"
+                ],
+                "summary": "获取所有社区信息",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/util.JsonResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/communities/{id}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Community"
+                ],
+                "summary": "获取某个社区详细信息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "社区ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/util.JsonResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/tokens/renew": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -65,7 +119,7 @@
                 }
             }
         },
-        "/v1/token/revoke": {
+        "/v1/tokens/revoke": {
             "post": {
                 "security": [
                     {
@@ -92,7 +146,7 @@
                 }
             }
         },
-        "/v1/user/login": {
+        "/v1/users/login": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -125,7 +179,7 @@
                 }
             }
         },
-        "/v1/user/logout": {
+        "/v1/users/logout": {
             "post": {
                 "security": [
                     {
@@ -152,7 +206,7 @@
                 }
             }
         },
-        "/v1/user/signup": {
+        "/v1/users/signup": {
             "post": {
                 "consumes": [
                     "application/json"

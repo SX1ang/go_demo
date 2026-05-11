@@ -13,14 +13,14 @@ log:
   max_backups: 7
 
 mysql:
-  host: "10.121.120.114"
+  host: "10.211.55.3"
   port: 3306
   user: "golang"
   password: "123456"
   database: "sql_demo"
 
 redis:
-  host: "10.121.120.114"
+  host: "10.211.55.3"
   port: 6379
   password: "redis"
   db: 0

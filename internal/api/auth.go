@@ -19,15 +19,15 @@ func NewAuthHandler(authService service.IAuthService) *AuthHandler {
 	return &AuthHandler{authService: authService}
 }
 
-// RenewAccessTokenHandle
+// RenewAccessTokenHandler
 // @Summary access token 刷新
 // @Tags Auth
 // @Accept json
 // @Produce json
 // @Param data body dto.RenewAccessTokenReq true "刷新access token请求信息"
 // @Success 200 {object} util.JsonResult
-// @Router /v1/token/renew [post]
-func (a *AuthHandler) RenewAccessTokenHandle(c *gin.Context) {
+// @Router /v1/tokens/renew [post]
+func (a *AuthHandler) RenewAccessTokenHandler(c *gin.Context) {
 	var req = new(dto.RenewAccessTokenReq)
 	if err := c.ShouldBindJSON(req); err != nil {
 		zap.L().Error("RenewAccessTokenHandle", zap.Any("RenewAccessTokenReq", req), zap.Error(err))
@@ -51,15 +51,15 @@ func (a *AuthHandler) RenewAccessTokenHandle(c *gin.Context) {
 
 }
 
-// RevokeRefreshTokenHandle
+// RevokeRefreshTokenHandler
 // @Summary refresh token 吊销
 // @Tags Auth
 // @Accept json
 // @Produce json
 // @Security BearerAuth
 // @Success 200 {object} util.JsonResult
-// @Router /v1/token/revoke [post]
-func (a *AuthHandler) RevokeRefreshTokenHandle(c *gin.Context) {
+// @Router /v1/tokens/revoke [post]
+func (a *AuthHandler) RevokeRefreshTokenHandler(c *gin.Context) {
 	var req = new(dto.RevokeRefreshTokenReq)
 	req.UserId = c.MustGet("UserId").(int64)
 

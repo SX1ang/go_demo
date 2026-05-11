@@ -2,6 +2,9 @@
 go web demo project
 
 ## wire依赖注入
+```shell
+go install github.com/google/wire/cmd/wire@latestc
+```
 进入cmd目录，执行：
 ```wire wire.go```
 
@@ -35,3 +38,6 @@ or
 ```bash
 go build -o bin/app ./cmd
 ```
+
+# 配置
+app dev模式下，无需认证即可访问接口，方便测试。

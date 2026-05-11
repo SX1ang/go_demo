@@ -1,11 +1,11 @@
 package app
 
 import (
+	"demoProject/config"
+	_ "demoProject/docs"
 	"demoProject/internal/api"
 	"demoProject/internal/middleware"
 	"demoProject/pkg/util"
-
-	_ "demoProject/docs"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -15,23 +15,40 @@ import (
 
 // 路由注册
 type Router struct {
+	cfg        *config.Config
 	basic      *api.BasicHandler
 	user       *api.UserHandler
 	auth       *api.AuthHandler
 	tokenMaker *util.JWTMaker
+
+	community *api.CommunityHandler
 }
 
 func NewRouter(
+	cfg *config.Config,
 	basic *api.BasicHandler,
 	user *api.UserHandler,
 	auth *api.AuthHandler,
-	tokenMaker *util.JWTMaker) *Router {
+	tokenMaker *util.JWTMaker,
+	community *api.CommunityHandler,
+) *Router {
 	return &Router{
+		cfg:        cfg,
 		basic:      basic,
 		user:       user,
 		auth:       auth,
 		tokenMaker: tokenMaker,
+
+		community: community,
 	}
+}
+
+// 封装一个条件中间件
+func (r *Router) jwtMiddleware() gin.HandlerFunc {
+	if r.cfg.App.Mode == "dev" {
+		return func(c *gin.Context) { c.Next() } // dev 环境直接放行
+	}
+	return middleware.JWT(r.tokenMaker)
 }
 
 func (r *Router) With(engine *gin.Engine) {
@@ -44,7 +61,7 @@ func (r *Router) With(engine *gin.Engine) {
 
 	versionGroup := engine.Group("/v1")
 
-	userGroup := versionGroup.Group("/user")
+	userGroup := versionGroup.Group("/users")
 	{
 		userGroup.POST("/signup", r.user.SignUpHandler)
 		userGroup.POST("/login", r.user.LoginHandler)
@@ -57,16 +74,22 @@ func (r *Router) With(engine *gin.Engine) {
 		}
 	}
 
-	tokenGroup := versionGroup.Group("/token")
+	tokenGroup := versionGroup.Group("/tokens")
 	{
 		//  renew 不需要认证 access token
-		tokenGroup.POST("/renew", r.auth.RenewAccessTokenHandle)
+		tokenGroup.POST("/renew", r.auth.RenewAccessTokenHandler)
 
 		// revoke 需要 access token 鉴权
 		authTokenGroup := tokenGroup.Group("")
 		authTokenGroup.Use(middleware.JWT(r.tokenMaker))
 		{
-			authTokenGroup.POST("/revoke", r.auth.RevokeRefreshTokenHandle)
+			authTokenGroup.POST("/revoke", r.auth.RevokeRefreshTokenHandler)
 		}
+	}
+
+	communityGroup := versionGroup.Group("/communities", r.jwtMiddleware())
+	{
+		communityGroup.GET("", r.community.CommunityListHandler)
+		communityGroup.GET("/:id", r.community.CommunityDetailHandler)
 	}
 }

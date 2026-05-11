@@ -1,4 +1,4 @@
-basePath: /v1
+basePath: /
 definitions:
   dto.LoginReq:
     properties:
@@ -59,7 +59,7 @@ definitions:
       msg:
         type: string
     type: object
-host: localhost:8080
+host: localhost:8081
 info:
   contact:
     email: yinshouxiang.email@gmail.com
@@ -81,7 +81,42 @@ paths:
           schema:
             type: string
       summary: 探活接口
-  /v1/token/renew:
+  /v1/communities:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.JsonResult'
+      summary: 获取所有社区信息
+      tags:
+      - Community
+  /v1/communities/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 社区ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.JsonResult'
+      summary: 获取某个社区详细信息
+      tags:
+      - Community
+  /v1/tokens/renew:
     post:
       consumes:
       - application/json
@@ -102,7 +137,7 @@ paths:
       summary: access token 刷新
       tags:
       - Auth
-  /v1/token/revoke:
+  /v1/tokens/revoke:
     post:
       consumes:
       - application/json
@@ -118,7 +153,7 @@ paths:
       summary: refresh token 吊销
       tags:
       - Auth
-  /v1/user/login:
+  /v1/users/login:
     post:
       consumes:
       - application/json
@@ -139,7 +174,7 @@ paths:
       summary: 用户登录
       tags:
       - User
-  /v1/user/logout:
+  /v1/users/logout:
     post:
       consumes:
       - application/json
@@ -155,7 +190,7 @@ paths:
       summary: 用户注销
       tags:
       - User
-  /v1/user/signup:
+  /v1/users/signup:
     post:
       consumes:
       - application/json

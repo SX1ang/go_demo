@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"demoProject/internal/api/dto"
+	"github.com/gin-gonic/gin"
 )
 
 type IUserService interface {
@@ -14,4 +15,9 @@ type IUserService interface {
 type IAuthService interface {
 	RenewAccessToken(ctx context.Context, req *dto.RenewAccessTokenReq) (*dto.RenewAccessTokenRes, error)
 	RevokeRefreshToken(ctx context.Context, req *dto.RevokeRefreshTokenReq) error
+}
+
+type ICommunityService interface {
+	GetCommunityList(c *gin.Context) (*dto.GetCommunityListRes, error)
+	GetCommunityDetail(c *gin.Context, req *dto.GetCommunityDetailReq) (*dto.GetCommunityDetailRes, error)
 }

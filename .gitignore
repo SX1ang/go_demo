@@ -2,3 +2,4 @@
 ./config/config.yaml
 .idea
 ./app
+cmd/gen/gen.go

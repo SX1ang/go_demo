@@ -4,6 +4,7 @@ var MsgFlags = map[int]string{
 	SUCCESS:        "success",
 	ERROR:          "fail",
 	INVALID_PARAMS: "请求参数错误",
+	UNAUTHORIZED:   "没有接口访问权限, 请登录",
 
 	ERROR_EXIST_USER:          "用户已存在",
 	ERROR_INVALID_CREDENTIALS: "用户名或密码错误",

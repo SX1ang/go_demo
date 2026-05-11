@@ -17,3 +17,9 @@ type ISessionRepo interface {
 	DeleteSession(ctx context.Context, userId int64) error
 	RevokeRefreshToken(ctx context.Context, userId int64) error
 }
+
+type ICommunityRepo interface {
+	GetCommunityList(ctx context.Context) ([]*model.Community, error)
+	GetCommunityDetail(ctx context.Context, communityId int64) (*model.Community, error)
+	AddCommunity(ctx context.Context, community *model.Community) error
+}

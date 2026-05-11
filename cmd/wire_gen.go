@@ -56,7 +56,10 @@ func InitServer(configConfig *config.Config) (*app.Server, func(), error) {
 	userHandler := api.NewUserHandler(iUserService)
 	iAuthService := service.NewAuthService(iSessionRepo, jwtMaker)
 	authHandler := api.NewAuthHandler(iAuthService)
-	router := app.NewRouter(basicHandler, userHandler, authHandler, jwtMaker)
+	iCommunityRepo := repo.NewMysqlCommunityRespository(resources)
+	iCommunityService := service.NewCommunityService(iCommunityRepo)
+	communityHandler := api.NewcommunityHandler(iCommunityService)
+	router := app.NewRouter(configConfig, basicHandler, userHandler, authHandler, jwtMaker, communityHandler)
 	server := app.NewServer(engine, router, configConfig)
 	return server, func() {
 		cleanup()

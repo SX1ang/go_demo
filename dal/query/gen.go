@@ -17,26 +17,29 @@ import (
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
-		db:      db,
-		Session: newSession(db, opts...),
-		User:    newUser(db, opts...),
+		db:        db,
+		Community: newCommunity(db, opts...),
+		Session:   newSession(db, opts...),
+		User:      newUser(db, opts...),
 	}
 }
 
 type Query struct {
 	db *gorm.DB
 
-	Session session
-	User    user
+	Community community
+	Session   session
+	User      user
 }
 
 func (q *Query) Available() bool { return q.db != nil }
 
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
-		db:      db,
-		Session: q.Session.clone(db),
-		User:    q.User.clone(db),
+		db:        db,
+		Community: q.Community.clone(db),
+		Session:   q.Session.clone(db),
+		User:      q.User.clone(db),
 	}
 }
 
@@ -50,21 +53,24 @@ func (q *Query) WriteDB() *Query {
 
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
-		db:      db,
-		Session: q.Session.replaceDB(db),
-		User:    q.User.replaceDB(db),
+		db:        db,
+		Community: q.Community.replaceDB(db),
+		Session:   q.Session.replaceDB(db),
+		User:      q.User.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
-	Session *sessionDo
-	User    *userDo
+	Community *communityDo
+	Session   *sessionDo
+	User      *userDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
-		Session: q.Session.WithContext(ctx),
-		User:    q.User.WithContext(ctx),
+		Community: q.Community.WithContext(ctx),
+		Session:   q.Session.WithContext(ctx),
+		User:      q.User.WithContext(ctx),
 	}
 }
 

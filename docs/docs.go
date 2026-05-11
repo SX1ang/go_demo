@@ -38,7 +38,61 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/token/renew": {
+        "/v1/communities": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Community"
+                ],
+                "summary": "获取所有社区信息",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/util.JsonResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/communities/{id}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Community"
+                ],
+                "summary": "获取某个社区详细信息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "社区ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/util.JsonResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/tokens/renew": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -71,7 +125,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/token/revoke": {
+        "/v1/tokens/revoke": {
             "post": {
                 "security": [
                     {
@@ -98,7 +152,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/user/login": {
+        "/v1/users/login": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -131,7 +185,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/user/logout": {
+        "/v1/users/logout": {
             "post": {
                 "security": [
                     {
@@ -158,7 +212,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/user/signup": {
+        "/v1/users/signup": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -287,8 +341,8 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
-	BasePath:         "/v1",
+	Host:             "localhost:8081",
+	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Go Web Demo Project's API",
 	Description:      "go web demo project",

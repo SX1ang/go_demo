@@ -14,9 +14,10 @@ func JWT(tokenMaker *util.JWTMaker) gin.HandlerFunc {
 		authHeader := c.Request.Header.Get("Authorization")
 		if authHeader == "" {
 			c.JSON(http.StatusOK, util.JsonRsp(&util.CustomizedErr{
-				Code: e.INVALID_PARAMS,
-				Msg:  e.GetMsg(e.INVALID_PARAMS),
+				Code: e.UNAUTHORIZED,
+				Msg:  e.GetMsg(e.UNAUTHORIZED),
 			}))
+			c.Abort()
 			return
 		}
 
@@ -24,8 +25,10 @@ func JWT(tokenMaker *util.JWTMaker) gin.HandlerFunc {
 		if !(len(parts) == 2 && parts[0] == "Bearer") {
 			c.JSON(http.StatusOK, util.JsonRsp(&util.CustomizedErr{
 				Code: e.INVALID_PARAMS,
-				Msg:  e.GetMsg(e.INVALID_PARAMS),
+				Msg:  "Authorization 格式错误，应为 Bearer <token>",
 			}))
+			c.Abort()
+			return
 		}
 
 		claims, err := tokenMaker.VerifyToken(parts[1])

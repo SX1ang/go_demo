@@ -26,7 +26,7 @@ func NewUserHandler(userService service.IUserService) *UserHandler {
 // @Produce json
 // @Param data body dto.SignUpReq true "注册请求信息"
 // @Success 200 {object} util.JsonResult
-// @Router /v1/user/signup [post]
+// @Router /v1/users/signup [post]
 func (u *UserHandler) SignUpHandler(c *gin.Context) {
 	// 1.获取参数和参数校验
 	var req = new(dto.SignUpReq)
@@ -61,7 +61,7 @@ func (u *UserHandler) SignUpHandler(c *gin.Context) {
 // @Produce json
 // @Param data body dto.LoginReq true "登录请求信息"
 // @Success 200 {object} util.JsonResult
-// @Router /v1/user/login [post]
+// @Router /v1/users/login [post]
 func (u *UserHandler) LoginHandler(c *gin.Context) {
 	// 获取参数和参数校验
 	var req = new(dto.LoginReq)
@@ -93,7 +93,7 @@ func (u *UserHandler) LoginHandler(c *gin.Context) {
 // @Produce json
 // @Security BearerAuth
 // @Success 200 {object} util.JsonResult
-// @Router /v1/user/logout [post]
+// @Router /v1/users/logout [post]
 func (u *UserHandler) LogoutHandler(c *gin.Context) {
 	// 获取参数和参数校验
 	var req = new(dto.LogoutReq)
