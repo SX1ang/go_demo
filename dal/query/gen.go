@@ -19,6 +19,7 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
 		db:        db,
 		Community: newCommunity(db, opts...),
+		Post:      newPost(db, opts...),
 		Session:   newSession(db, opts...),
 		User:      newUser(db, opts...),
 	}
@@ -28,6 +29,7 @@ type Query struct {
 	db *gorm.DB
 
 	Community community
+	Post      post
 	Session   session
 	User      user
 }
@@ -38,6 +40,7 @@ func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
 		db:        db,
 		Community: q.Community.clone(db),
+		Post:      q.Post.clone(db),
 		Session:   q.Session.clone(db),
 		User:      q.User.clone(db),
 	}
@@ -55,6 +58,7 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
 		db:        db,
 		Community: q.Community.replaceDB(db),
+		Post:      q.Post.replaceDB(db),
 		Session:   q.Session.replaceDB(db),
 		User:      q.User.replaceDB(db),
 	}
@@ -62,6 +66,7 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 
 type queryCtx struct {
 	Community *communityDo
+	Post      *postDo
 	Session   *sessionDo
 	User      *userDo
 }
@@ -69,6 +74,7 @@ type queryCtx struct {
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
 		Community: q.Community.WithContext(ctx),
+		Post:      q.Post.WithContext(ctx),
 		Session:   q.Session.WithContext(ctx),
 		User:      q.User.WithContext(ctx),
 	}

@@ -1,7 +1,7 @@
 .PHONY: all build run tidy wire gen swagger clean help
 
 # 默认目标
-all: tidy wire swagger build
+all: tidy wire gen swagger build
 
 # ================================
 # 依赖管理

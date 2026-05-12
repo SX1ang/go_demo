@@ -25,8 +25,8 @@ func main() {
 
 	// reuse the database connection in Project or create a connection here
 	// if you want to use GenerateModel/GenerateModelAs, UseDB is necessary or it will panic
-	//db, _ := gorm.Open(mysql.Open("golang:123456@(10.121.120.114:3306)/sql_demo?charset=utf8mb4&parseTime=True&loc=Local"))
-	db, _ := gorm.Open(mysql.Open("golang:123456@(10.211.55.3:3306)/sql_demo?charset=utf8mb4&parseTime=True&loc=Local"))
+	db, _ := gorm.Open(mysql.Open("golang:123456@(10.121.120.114:3306)/sql_demo?charset=utf8mb4&parseTime=True&loc=Local"))
+	//db, _ := gorm.Open(mysql.Open("golang:123456@(10.211.55.3:3306)/sql_demo?charset=utf8mb4&parseTime=True&loc=Local"))
 	g.UseDB(db)
 
 	// generate a struct and specify struct's name
@@ -34,6 +34,7 @@ func main() {
 		g.GenerateModel("user"),
 		g.GenerateModel("session"),
 		g.GenerateModel("community"),
+		g.GenerateModel("post"),
 	)
 
 	// execute the action of code generation
