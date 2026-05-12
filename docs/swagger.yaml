@@ -1,5 +1,18 @@
 basePath: /
 definitions:
+  dto.CreatePostReq:
+    properties:
+      community_id:
+        type: integer
+      content:
+        type: string
+      title:
+        type: string
+    required:
+    - community_id
+    - content
+    - title
+    type: object
   dto.LoginReq:
     properties:
       password:
@@ -92,6 +105,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/util.JsonResult'
+      security:
+      - BearerAuth: []
       summary: 获取所有社区信息
       tags:
       - Community
@@ -113,9 +128,34 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/util.JsonResult'
+      security:
+      - BearerAuth: []
       summary: 获取某个社区详细信息
       tags:
       - Community
+  /v1/posts:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建的帖子信息
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreatePostReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.JsonResult'
+      security:
+      - BearerAuth: []
+      summary: 发布帖子
+      tags:
+      - Post
   /v1/tokens/renew:
     post:
       consumes:
@@ -211,6 +251,11 @@ paths:
       summary: 用户注册
       tags:
       - User
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
 tags:
 - description: 用户相关接口

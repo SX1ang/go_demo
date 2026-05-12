@@ -43,8 +43,8 @@ func InitServer(configConfig *config.Config) (*app.Server, func(), error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	iUserRepo := repo.NewMysqlUserRespository(resources)
-	iSessionRepo := repo.NewMysqlSessionRespository(resources)
+	iUserRepo := repo.NewMysqlUserRepository(resources)
+	iSessionRepo := repo.NewMysqlSessionRepository(resources)
 	envConfig, err := config.InitEnvConfig()
 	if err != nil {
 		cleanup()
@@ -56,10 +56,13 @@ func InitServer(configConfig *config.Config) (*app.Server, func(), error) {
 	userHandler := api.NewUserHandler(iUserService)
 	iAuthService := service.NewAuthService(iSessionRepo, jwtMaker)
 	authHandler := api.NewAuthHandler(iAuthService)
-	iCommunityRepo := repo.NewMysqlCommunityRespository(resources)
+	iCommunityRepo := repo.NewMysqlCommunityRepository(resources)
 	iCommunityService := service.NewCommunityService(iCommunityRepo)
 	communityHandler := api.NewcommunityHandler(iCommunityService)
-	router := app.NewRouter(configConfig, basicHandler, userHandler, authHandler, jwtMaker, communityHandler)
+	iPostRepo := repo.NewMysqlPostRepository(db)
+	iPostService := service.NewPostService(iPostRepo)
+	postHandler := api.NewPostHandler(iPostService)
+	router := app.NewRouter(configConfig, basicHandler, userHandler, authHandler, jwtMaker, communityHandler, postHandler)
 	server := app.NewServer(engine, router, configConfig)
 	return server, func() {
 		cleanup()

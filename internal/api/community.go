@@ -25,6 +25,7 @@ func NewcommunityHandler(communityService service.ICommunityService) *CommunityH
 // @Tags Community
 // @Accept json
 // @Produce json
+// @Security BearerAuth
 // @Success 200 {object} util.JsonResult
 // @Router /v1/communities [get]
 func (comm *CommunityHandler) CommunityListHandler(c *gin.Context) {
@@ -48,6 +49,7 @@ func (comm *CommunityHandler) CommunityListHandler(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path int64 true "社区ID"
+// @Security BearerAuth
 // @Success 200 {object} util.JsonResult
 // @Router /v1/communities/{id} [get]
 func (comm *CommunityHandler) CommunityDetailHandler(c *gin.Context) {

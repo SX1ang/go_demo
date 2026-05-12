@@ -23,3 +23,7 @@ type ICommunityRepo interface {
 	GetCommunityDetail(ctx context.Context, communityId int64) (*model.Community, error)
 	AddCommunity(ctx context.Context, community *model.Community) error
 }
+
+type IPostRepo interface {
+	CreatePost(ctx context.Context, post *model.Post) error
+}

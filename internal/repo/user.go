@@ -10,18 +10,18 @@ import (
 	"gorm.io/gorm"
 )
 
-type MysqlUserRespository struct {
+type MysqlUserRepository struct {
 	db *gorm.DB
 }
 
-func NewMysqlUserRespository(res *infra.Resources) IUserRepo {
-	return &MysqlUserRespository{
+func NewMysqlUserRepository(res *infra.Resources) IUserRepo {
+	return &MysqlUserRepository{
 		db: res.DB,
 	}
 }
 
 // UserIsExist 检查用户是否存在
-func (m *MysqlUserRespository) UserIsExist(ctx context.Context, username string) (bool, error) {
+func (m *MysqlUserRepository) UserIsExist(ctx context.Context, username string) (bool, error) {
 	q := query.Use(m.db)
 
 	// 用表对象的 WithContext
@@ -42,7 +42,7 @@ func (m *MysqlUserRespository) UserIsExist(ctx context.Context, username string)
 }
 
 // AddUser 新增User记录
-func (m *MysqlUserRespository) AddUser(ctx context.Context, user *model.User) error {
+func (m *MysqlUserRepository) AddUser(ctx context.Context, user *model.User) error {
 	err := query.Use(m.db).WithContext(ctx).User.Create(user)
 
 	if err != nil {
@@ -52,7 +52,7 @@ func (m *MysqlUserRespository) AddUser(ctx context.Context, user *model.User) er
 	return nil
 }
 
-func (m *MysqlUserRespository) GetUser(ctx context.Context, username string) (*model.User, error) {
+func (m *MysqlUserRepository) GetUser(ctx context.Context, username string) (*model.User, error) {
 	q := query.Use(m.db)
 
 	// 用表对象的 WithContext

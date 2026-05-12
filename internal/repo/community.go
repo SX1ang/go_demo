@@ -13,15 +13,15 @@ type CommunityBasic struct {
 	CommunityName string `gorm:"column:community_name"`
 }
 
-type MysqlCommunityRespository struct {
+type MysqlCommunityRepository struct {
 	db *gorm.DB
 }
 
-func NewMysqlCommunityRespository(res *infra.Resources) ICommunityRepo {
-	return &MysqlCommunityRespository{db: res.DB}
+func NewMysqlCommunityRepository(res *infra.Resources) ICommunityRepo {
+	return &MysqlCommunityRepository{db: res.DB}
 }
 
-func (m MysqlCommunityRespository) GetCommunityList(ctx context.Context) ([]*CommunityBasic, error) {
+func (m MysqlCommunityRepository) GetCommunityList(ctx context.Context) ([]*CommunityBasic, error) {
 	q := query.Use(m.db)
 
 	var result []*CommunityBasic
@@ -36,7 +36,7 @@ func (m MysqlCommunityRespository) GetCommunityList(ctx context.Context) ([]*Com
 	return result, nil
 }
 
-func (m MysqlCommunityRespository) GetCommunityDetail(ctx context.Context, communityId int64) (*model.Community, error) {
+func (m MysqlCommunityRepository) GetCommunityDetail(ctx context.Context, communityId int64) (*model.Community, error) {
 	q := query.Use(m.db)
 
 	community, err := q.Community.
@@ -51,7 +51,7 @@ func (m MysqlCommunityRespository) GetCommunityDetail(ctx context.Context, commu
 	return community, nil
 }
 
-func (m MysqlCommunityRespository) AddCommunity(ctx context.Context, community *model.Community) error {
+func (m MysqlCommunityRepository) AddCommunity(ctx context.Context, community *model.Community) error {
 	err := query.Use(m.db).WithContext(ctx).Community.Create(community)
 	if err != nil {
 		return err

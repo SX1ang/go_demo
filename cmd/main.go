@@ -23,6 +23,10 @@ import (
 // @tag.name User
 // @tag.description 用户相关接口
 
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+
 func main() {
 	snowflake.Init("2026-01-01", 1)
 

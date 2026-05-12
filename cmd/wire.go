@@ -52,16 +52,19 @@ func InitServer(*config.Config) (*app.Server, func(), error) {
 		api.NewUserHandler,
 		api.NewAuthHandler,
 		api.NewcommunityHandler,
+		api.NewPostHandler,
 
 		// service
 		service.NewUserService,
 		service.NewAuthService,
 		service.NewCommunityService,
+		service.NewPostService,
 
 		// repo
-		repo.NewMysqlUserRespository,
-		repo.NewMysqlSessionRespository,
-		repo.NewMysqlCommunityRespository,
+		repo.NewMysqlUserRepository,
+		repo.NewMysqlSessionRepository,
+		repo.NewMysqlCommunityRepository,
+		repo.NewMysqlPostRepository,
 
 		// server
 		app.NewServer,

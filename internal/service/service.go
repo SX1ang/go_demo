@@ -21,3 +21,7 @@ type ICommunityService interface {
 	GetCommunityList(c *gin.Context) (*dto.GetCommunityListRes, error)
 	GetCommunityDetail(c *gin.Context, req *dto.GetCommunityDetailReq) (*dto.GetCommunityDetailRes, error)
 }
+
+type IPostService interface {
+	CreatePost(c *gin.Context, req *dto.CreatePostReq) error
+}

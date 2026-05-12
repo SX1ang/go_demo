@@ -3,6 +3,7 @@ package middleware
 import (
 	"demoProject/internal/e"
 	"demoProject/pkg/util"
+	"go.uber.org/zap"
 	"net/http"
 	"strings"
 
@@ -23,6 +24,7 @@ func JWT(tokenMaker *util.JWTMaker) gin.HandlerFunc {
 
 		parts := strings.SplitN(authHeader, " ", 2)
 		if !(len(parts) == 2 && parts[0] == "Bearer") {
+			zap.L().Error("invalid token", zap.String("token", authHeader))
 			c.JSON(http.StatusOK, util.JsonRsp(&util.CustomizedErr{
 				Code: e.INVALID_PARAMS,
 				Msg:  "Authorization 格式错误，应为 Bearer <token>",
