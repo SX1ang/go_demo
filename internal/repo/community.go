@@ -8,6 +8,11 @@ import (
 	"gorm.io/gorm"
 )
 
+type CommunityBasic struct {
+	CommunityID   uint   `gorm:"column:community_id"`
+	CommunityName string `gorm:"column:community_name"`
+}
+
 type MysqlCommunityRespository struct {
 	db *gorm.DB
 }
@@ -16,15 +21,19 @@ func NewMysqlCommunityRespository(res *infra.Resources) ICommunityRepo {
 	return &MysqlCommunityRespository{db: res.DB}
 }
 
-func (m MysqlCommunityRespository) GetCommunityList(ctx context.Context) ([]*model.Community, error) {
-	q := query.Use(m.db).WithContext(ctx).Community
+func (m MysqlCommunityRespository) GetCommunityList(ctx context.Context) ([]*CommunityBasic, error) {
+	q := query.Use(m.db)
 
-	communities, err := q.Find()
+	var result []*CommunityBasic
+	err := q.WithContext(ctx).
+		Community.
+		Select(q.Community.CommunityID, q.Community.CommunityName).
+		Scan(&result)
 	if err != nil {
 		return nil, err
 	}
 
-	return communities, nil
+	return result, nil
 }
 
 func (m MysqlCommunityRespository) GetCommunityDetail(ctx context.Context, communityId int64) (*model.Community, error) {

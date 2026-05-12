@@ -19,7 +19,7 @@ type ISessionRepo interface {
 }
 
 type ICommunityRepo interface {
-	GetCommunityList(ctx context.Context) ([]*model.Community, error)
+	GetCommunityList(ctx context.Context) ([]*CommunityBasic, error)
 	GetCommunityDetail(ctx context.Context, communityId int64) (*model.Community, error)
 	AddCommunity(ctx context.Context, community *model.Community) error
 }

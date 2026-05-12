@@ -24,8 +24,16 @@ func (comm *CommunityService) GetCommunityList(ctx *gin.Context) (*dto.GetCommun
 		return nil, err
 	}
 
+	communities := make([]*dto.CommunityItem, 0, len(commList))
+	for _, comm := range commList {
+		communities = append(communities, &dto.CommunityItem{
+			ID:   int64(comm.CommunityID),
+			Name: comm.CommunityName,
+		})
+	}
+
 	return &dto.GetCommunityListRes{
-		Communities: commList,
+		Communities: communities,
 	}, nil
 }
 
@@ -37,6 +45,12 @@ func (comm *CommunityService) GetCommunityDetail(ctx *gin.Context, req *dto.GetC
 	}
 
 	return &dto.GetCommunityDetailRes{
-		Community: commDetail,
+		Community: &dto.CommunityDetail{
+			ID:           int64(commDetail.CommunityID),
+			Name:         commDetail.CommunityName,
+			Introduction: commDetail.Introduction,
+			CreateTime:   commDetail.CreateTime,
+			UpdateTime:   commDetail.UpdateTime,
+		},
 	}, nil
 }
