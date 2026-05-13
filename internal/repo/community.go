@@ -21,7 +21,7 @@ func NewMysqlCommunityRepository(res *infra.Resources) ICommunityRepo {
 	return &MysqlCommunityRepository{db: res.DB}
 }
 
-func (m MysqlCommunityRepository) GetCommunityList(ctx context.Context) ([]*CommunityBasic, error) {
+func (m *MysqlCommunityRepository) GetCommunityList(ctx context.Context) ([]*CommunityBasic, error) {
 	q := query.Use(m.db)
 
 	var result []*CommunityBasic
@@ -36,7 +36,7 @@ func (m MysqlCommunityRepository) GetCommunityList(ctx context.Context) ([]*Comm
 	return result, nil
 }
 
-func (m MysqlCommunityRepository) GetCommunityDetail(ctx context.Context, communityId int64) (*model.Community, error) {
+func (m *MysqlCommunityRepository) GetCommunityDetail(ctx context.Context, communityId int64) (*model.Community, error) {
 	q := query.Use(m.db)
 
 	community, err := q.Community.
@@ -51,10 +51,26 @@ func (m MysqlCommunityRepository) GetCommunityDetail(ctx context.Context, commun
 	return community, nil
 }
 
-func (m MysqlCommunityRepository) AddCommunity(ctx context.Context, community *model.Community) error {
+func (m *MysqlCommunityRepository) AddCommunity(ctx context.Context, community *model.Community) error {
 	err := query.Use(m.db).WithContext(ctx).Community.Create(community)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func (m *MysqlCommunityRepository) CommunityIsExist(ctx context.Context, communityId int32) (bool, error) {
+	q := query.Use(m.db)
+
+	_, err := q.WithContext(ctx).Community.Where(q.Community.CommunityID.Eq(communityId)).First()
+
+	if err == nil {
+		return true, nil
+	}
+
+	if err == gorm.ErrRecordNotFound {
+		return false, nil
+	}
+
+	return false, err
 }

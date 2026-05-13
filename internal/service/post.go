@@ -3,8 +3,10 @@ package service
 import (
 	"demoProject/dal/model"
 	"demoProject/internal/api/dto"
+	"demoProject/internal/e"
 	"demoProject/internal/repo"
 	"demoProject/pkg/snowflake"
+	"demoProject/pkg/util"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -30,14 +32,33 @@ func PostStatusToText(s int32) string {
 
 type PostService struct {
 	postRepo repo.IPostRepo
+	commRepo repo.ICommunityRepo
 }
 
-func NewPostService(postRepo repo.IPostRepo) IPostService {
-	return &PostService{postRepo: postRepo}
+func NewPostService(postRepo repo.IPostRepo, commRepo repo.ICommunityRepo) IPostService {
+	return &PostService{
+		postRepo: postRepo,
+		commRepo: commRepo,
+	}
 }
 
 func (p *PostService) CreatePost(c *gin.Context, req *dto.CreatePostReq) error {
-	// 1.构造post model
+	// 1.检查community ID是否存在
+	isExist, err := p.commRepo.CommunityIsExist(c, int32(req.CommunityID))
+	if err != nil {
+		zap.L().Error("check CommunityIsExist error", zap.Error(err))
+		return err
+	}
+
+	if !isExist {
+		zap.L().Error("CommunityIsExist false")
+		return &util.CustomizedErr{
+			Code: e.ERROR_NOT_EXIST_COMMUNITY,
+			Msg:  e.GetMsg(e.ERROR_NOT_EXIST_COMMUNITY),
+		}
+	}
+
+	// 2.构造post model
 	postId := snowflake.GenID()
 	authorId := c.MustGet("UserId").(int64)
 
@@ -52,7 +73,7 @@ func (p *PostService) CreatePost(c *gin.Context, req *dto.CreatePostReq) error {
 		UpdateTime:  time.Now(),
 	}
 
-	err := p.postRepo.CreatePost(c, &post)
+	err = p.postRepo.CreatePost(c, &post)
 	if err != nil {
 		zap.L().Error("postRepo.CreatePost error", zap.Error(err))
 		return err

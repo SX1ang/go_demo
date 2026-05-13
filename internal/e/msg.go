@@ -12,6 +12,8 @@ var MsgFlags = map[int]string{
 	ERROR_AUTH:                     "Token错误",
 	ERROR_AUTH_CHECK_TOKEN_FAIL:    "Token鉴权失败",
 	ERROR_AUTH_CHECK_TOKEN_EXPIRED: "Token已过期",
+
+	ERROR_NOT_EXIST_COMMUNITY: "社区不存在",
 }
 
 func GetMsg(code int) string {

@@ -5,6 +5,7 @@ import (
 	"demoProject/dal/model"
 	"demoProject/dal/query"
 	"demoProject/internal/api/dto"
+	"demoProject/internal/infra"
 	"time"
 
 	"gorm.io/gorm"
@@ -14,8 +15,8 @@ type MysqlPostRepository struct {
 	db *gorm.DB
 }
 
-func NewMysqlPostRepository(db *gorm.DB) IPostRepo {
-	return &MysqlPostRepository{db: db}
+func NewMysqlPostRepository(res *infra.Resources) IPostRepo {
+	return &MysqlPostRepository{db: res.DB}
 }
 
 func (m *MysqlPostRepository) CreatePost(ctx context.Context, post *model.Post) error {

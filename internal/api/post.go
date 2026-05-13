@@ -5,6 +5,7 @@ import (
 	"demoProject/internal/e"
 	"demoProject/internal/service"
 	"demoProject/pkg/util"
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -44,10 +45,15 @@ func (p *PostHandler) CreatePostHandler(ctx *gin.Context) {
 	// 2.创建帖子
 	err := p.postService.CreatePost(ctx, req)
 	if err != nil {
-		ctx.JSON(http.StatusOK, util.JsonRsp(&util.CustomizedErr{
-			Code: e.ERROR,
-			Msg:  e.GetMsg(e.ERROR),
-		}))
+		var customErr *util.CustomizedErr
+		if errors.As(err, &customErr) {
+			ctx.JSON(http.StatusOK, util.JsonRsp(customErr))
+		} else {
+			ctx.JSON(http.StatusOK, util.JsonRsp(&util.CustomizedErr{
+				Code: e.ERROR,
+				Msg:  e.GetMsg(e.ERROR),
+			}))
+		}
 
 		return
 	}
