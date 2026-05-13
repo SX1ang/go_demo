@@ -156,6 +156,29 @@ paths:
       summary: 发布帖子
       tags:
       - Post
+  /v1/posts/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 帖子ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.JsonResult'
+      security:
+      - BearerAuth: []
+      summary: 获取某个帖子详细信息
+      tags:
+      - Post
   /v1/tokens/renew:
     post:
       consumes:

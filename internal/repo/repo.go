@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"demoProject/dal/model"
+	"demoProject/internal/api/dto"
 )
 
 type IUserRepo interface {
@@ -26,4 +27,5 @@ type ICommunityRepo interface {
 
 type IPostRepo interface {
 	CreatePost(ctx context.Context, post *model.Post) error
+	GetPostDetail(ctx context.Context, postId int64) (*dto.PostDetail, error)
 }

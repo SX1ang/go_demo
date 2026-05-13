@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"demoProject/internal/api/dto"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,4 +25,5 @@ type ICommunityService interface {
 
 type IPostService interface {
 	CreatePost(c *gin.Context, req *dto.CreatePostReq) error
+	GetPostDetail(c *gin.Context, req *dto.GetPostDetailReq) (*dto.GetPostDetailRes, error)
 }

@@ -99,5 +99,7 @@ func (r *Router) With(engine *gin.Engine) {
 	postGroup := versionGroup.Group("/posts", r.jwtMiddleware())
 	{
 		postGroup.POST("", r.post.CreatePostHandler)
+		// 通过http:x.x.x.x/post/4567839465372839487（帖子ID）获取帖子详情
+		postGroup.GET("/:id", r.post.PostDetailHandler)
 	}
 }

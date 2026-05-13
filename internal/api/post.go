@@ -5,9 +5,10 @@ import (
 	"demoProject/internal/e"
 	"demoProject/internal/service"
 	"demoProject/pkg/util"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 type PostHandler struct {
@@ -54,4 +55,39 @@ func (p *PostHandler) CreatePostHandler(ctx *gin.Context) {
 	// 3.返回响应
 	ctx.JSON(http.StatusOK, util.JsonRsp("ok"))
 
+}
+
+// PostDetailHandler
+// @Summary 获取某个帖子详细信息
+// @Tags Post
+// @Accept json
+// @Produce json
+// @Param id path int64 true "帖子ID"
+// @Security BearerAuth
+// @Success 200 {object} util.JsonResult
+// @Router /v1/posts/{id} [get]
+func (p *PostHandler) PostDetailHandler(ctx *gin.Context) {
+	// 1.获取帖子ID
+	var req = new(dto.GetPostDetailReq)
+	err := ctx.ShouldBindUri(&req)
+	if err != nil {
+		zap.L().Error("ShouldBindUri failed", zap.Error(err))
+		ctx.JSON(http.StatusOK, util.JsonRsp(&util.CustomizedErr{
+			Code: e.INVALID_PARAMS,
+			Msg:  e.GetMsg(e.INVALID_PARAMS),
+		}))
+		return
+	}
+
+	// 2.根据帖子ID查询帖子详情
+	postDetailRes, err := p.postService.GetPostDetail(ctx, req)
+	if err != nil {
+		ctx.JSON(http.StatusOK, util.JsonRsp(&util.CustomizedErr{
+			Code: e.ERROR,
+			Msg:  e.GetMsg(e.ERROR),
+		}))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, util.JsonRsp(postDetailRes))
 }
