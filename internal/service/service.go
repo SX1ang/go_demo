@@ -26,4 +26,5 @@ type ICommunityService interface {
 type IPostService interface {
 	CreatePost(c *gin.Context, req *dto.CreatePostReq) error
 	GetPostDetail(c *gin.Context, req *dto.GetPostDetailReq) (*dto.GetPostDetailRes, error)
+	GetPostList(c *gin.Context, req *dto.GetPostListReq) (*dto.GetPostListRes, error)
 }

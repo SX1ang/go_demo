@@ -134,6 +134,35 @@ paths:
       tags:
       - Community
   /v1/posts:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - default: 1
+        description: 页码
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - default: 10
+        description: 每页数量
+        in: query
+        maximum: 100
+        minimum: 1
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.JsonResult'
+      security:
+      - BearerAuth: []
+      summary: 分页获取所有帖子信息
+      tags:
+      - Post
     post:
       consumes:
       - application/json

@@ -90,3 +90,56 @@ func (m *MysqlPostRepository) GetPostDetail(ctx context.Context, postId int64) (
 		},
 	}, nil
 }
+
+func (m *MysqlPostRepository) GetPostList(ctx context.Context, page, size int) ([]*dto.PostDetail, error) {
+	q := query.Use(m.db)
+	p := q.Post
+	u := q.User
+	c := q.Community
+
+	var flats []postDetailFlat
+	err := p.WithContext(ctx).
+		Select(
+			p.PostID.As("post_id"),
+			p.Title,
+			p.Content,
+			p.Status,
+			p.CreateTime.As("post_create_time"),
+			p.UpdateTime.As("post_update_time"),
+			u.Username.As("author_name"),
+			c.CommunityID.As("community_id"),
+			c.CommunityName.As("community_name"),
+			c.Introduction,
+			c.CreateTime.As("comm_create_time"),
+			c.UpdateTime.As("comm_update_time"),
+		).
+		LeftJoin(u, p.AuthorID.EqCol(u.UserID)).
+		LeftJoin(c, p.CommunityID.EqCol(c.CommunityID)).
+		Offset((page - 1) * size).
+		Limit(size).
+		Scan(&flats)
+	if err != nil {
+		return nil, err
+	}
+
+	posts := make([]*dto.PostDetail, 0, len(flats))
+	for _, flat := range flats {
+		posts = append(posts, &dto.PostDetail{
+			ID:         flat.PostID,
+			Title:      flat.Title,
+			Content:    flat.Content,
+			Status:     flat.Status,
+			CreateTime: flat.PostCreateTime,
+			UpdateTime: flat.PostUpdateTime,
+			AuthorName: flat.AuthorName,
+			Community: dto.CommunityDetail{
+				ID:           flat.CommunityID,
+				Name:         flat.CommunityName,
+				Introduction: flat.Introduction,
+				CreateTime:   flat.CommCreateTime,
+				UpdateTime:   flat.CommUpdateTime,
+			},
+		})
+	}
+	return posts, nil
+}

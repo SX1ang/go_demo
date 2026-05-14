@@ -97,3 +97,37 @@ func (p *PostHandler) PostDetailHandler(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, util.JsonRsp(postDetailRes))
 }
+
+// PostListHandler
+// @Summary 分页获取所有帖子信息
+// @Tags Post
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param page query int false "页码" default(1) minimum(1)
+// @Param size query int false "每页数量" default(10) minimum(1) maximum(100)
+// @Success 200 {object} util.JsonResult
+// @Router /v1/posts [get]
+func (p *PostHandler) PostListHandler(c *gin.Context) {
+	var req dto.GetPostListReq
+	if err := c.ShouldBindQuery(&req); err != nil {
+		zap.L().Error("ShouldBindQuery failed", zap.Error(err))
+		c.JSON(http.StatusOK, util.JsonRsp(&util.CustomizedErr{
+			Code: e.INVALID_PARAMS,
+			Msg:  e.GetMsg(e.INVALID_PARAMS),
+		}))
+
+		return
+	}
+
+	postList, err := p.postService.GetPostList(c, &req)
+	if err != nil {
+		c.JSON(http.StatusOK, util.JsonRsp(&util.CustomizedErr{
+			Code: e.ERROR,
+			Msg:  e.GetMsg(e.ERROR),
+		}))
+		return
+	}
+
+	c.JSON(http.StatusOK, util.JsonRsp(postList))
+}

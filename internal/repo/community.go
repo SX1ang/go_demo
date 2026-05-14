@@ -5,6 +5,8 @@ import (
 	"demoProject/dal/model"
 	"demoProject/dal/query"
 	"demoProject/internal/infra"
+	"errors"
+
 	"gorm.io/gorm"
 )
 
@@ -68,7 +70,7 @@ func (m *MysqlCommunityRepository) CommunityIsExist(ctx context.Context, communi
 		return true, nil
 	}
 
-	if err == gorm.ErrRecordNotFound {
+	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return false, nil
 	}
 

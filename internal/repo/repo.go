@@ -29,4 +29,5 @@ type ICommunityRepo interface {
 type IPostRepo interface {
 	CreatePost(ctx context.Context, post *model.Post) error
 	GetPostDetail(ctx context.Context, postId int64) (*dto.PostDetail, error)
+	GetPostList(ctx context.Context, page, size int) ([]*dto.PostDetail, error)
 }

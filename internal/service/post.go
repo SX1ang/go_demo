@@ -96,3 +96,18 @@ func (p *PostService) GetPostDetail(c *gin.Context, req *dto.GetPostDetailReq) (
 		Post: postDetail,
 	}, nil
 }
+
+func (p *PostService) GetPostList(c *gin.Context, req *dto.GetPostListReq) (*dto.GetPostListRes, error) {
+	page := req.Page
+	size := req.Size
+
+	postList, err := p.postRepo.GetPostList(c, page, size)
+	if err != nil {
+		zap.L().Error("postRepo.GetPostList error", zap.Error(err))
+		return nil, err
+	}
+
+	return &dto.GetPostListRes{
+		Posts: postList,
+	}, nil
+}
