@@ -14,7 +14,7 @@ type LoginReq struct {
 }
 
 type LoginRes struct {
-	UserID        int64  `json:"user_id"`
+	UserID        int64  `json:"user_id,string"`
 	Username      string `json:"username"`
 	SessionId     string `json:"session_id"`
 	AccessToken   string `json:"access_token"`

@@ -9,14 +9,14 @@ type CreatePostReq struct {
 }
 
 type GetPostDetailReq struct {
-	PostID int64 `uri:"id" binding:"required"`
+	PostID int64 `uri:"id,string" binding:"required"`
 }
 
 type PostDetail struct {
-	ID         int64     `json:"id"`      // 帖子id
-	Title      string    `json:"title"`   // 标题
-	Content    string    `json:"content"` // 内容
-	Status     int32     `json:"status"`  // 帖子状态
+	ID         int64     `json:"id,string"` // 帖子id
+	Title      string    `json:"title"`     // 标题
+	Content    string    `json:"content"`   // 内容
+	Status     int32     `json:"status"`    // 帖子状态
 	StatusText string    `json:"status_text"`
 	CreateTime time.Time `json:"create_time"` // 创建时间
 	UpdateTime time.Time `json:"update_time"` // 更新时间
