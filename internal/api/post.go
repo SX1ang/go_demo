@@ -88,6 +88,11 @@ func (p *PostHandler) PostDetailHandler(ctx *gin.Context) {
 	// 2.根据帖子ID查询帖子详情
 	postDetailRes, err := p.postService.GetPostDetail(ctx, req)
 	if err != nil {
+		var customErr *util.CustomizedErr
+		if errors.As(err, &customErr) {
+			ctx.JSON(http.StatusOK, util.JsonRsp(customErr))
+			return
+		}
 		ctx.JSON(http.StatusOK, util.JsonRsp(&util.CustomizedErr{
 			Code: e.ERROR,
 			Msg:  e.GetMsg(e.ERROR),

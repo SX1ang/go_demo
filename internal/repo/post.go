@@ -5,7 +5,9 @@ import (
 	"demoProject/dal/model"
 	"demoProject/dal/query"
 	"demoProject/internal/api/dto"
+	"demoProject/internal/e"
 	"demoProject/internal/infra"
+	"demoProject/pkg/util"
 	"time"
 
 	"gorm.io/gorm"
@@ -69,6 +71,15 @@ func (m *MysqlPostRepository) GetPostDetail(ctx context.Context, postId int64) (
 		LeftJoin(c, p.CommunityID.EqCol(c.CommunityID)).
 		Where(p.PostID.Eq(postId)).
 		Scan(&flat)
+
+	// Scan查不到不报错，需要手动判断
+	if flat.PostID == 0 {
+		return nil, &util.CustomizedErr{
+			Code: e.ERROR_NOT_EXIST_POST,
+			Msg:  e.GetMsg(e.ERROR_NOT_EXIST_POST),
+		}
+	}
+
 	if err != nil {
 		return nil, err
 	}

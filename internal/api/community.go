@@ -5,6 +5,7 @@ import (
 	"demoProject/internal/e"
 	"demoProject/internal/service"
 	"demoProject/pkg/util"
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -67,6 +68,11 @@ func (comm *CommunityHandler) CommunityDetailHandler(c *gin.Context) {
 
 	commDetailRes, err := comm.communityService.GetCommunityDetail(c, &req)
 	if err != nil {
+		var customErr *util.CustomizedErr
+		if errors.As(err, &customErr) {
+			c.JSON(http.StatusOK, util.JsonRsp(customErr))
+			return
+		}
 		c.JSON(http.StatusOK, util.JsonRsp(&util.CustomizedErr{
 			Code: e.ERROR,
 			Msg:  e.GetMsg(e.ERROR),

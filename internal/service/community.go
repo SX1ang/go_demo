@@ -2,9 +2,14 @@ package service
 
 import (
 	"demoProject/internal/api/dto"
+	"demoProject/internal/e"
 	"demoProject/internal/repo"
+	"demoProject/pkg/util"
+	"errors"
+
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 type CommunityService struct {
@@ -40,6 +45,12 @@ func (comm *CommunityService) GetCommunityList(ctx *gin.Context) (*dto.GetCommun
 func (comm *CommunityService) GetCommunityDetail(ctx *gin.Context, req *dto.GetCommunityDetailReq) (*dto.GetCommunityDetailRes, error) {
 	commDetail, err := comm.communityRepo.GetCommunityDetail(ctx, req.CommunityId)
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, &util.CustomizedErr{
+				Code: e.ERROR_NOT_EXIST_COMMUNITY,
+				Msg:  e.GetMsg(e.ERROR_NOT_EXIST_COMMUNITY),
+			}
+		}
 		zap.L().Error("GetCommunityDetail failed", zap.Error(err))
 		return nil, err
 	}
