@@ -28,3 +28,7 @@ type IPostService interface {
 	GetPostDetail(c *gin.Context, req *dto.GetPostDetailReq) (*dto.GetPostDetailRes, error)
 	GetPostList(c *gin.Context, req *dto.GetPostListReq) (*dto.GetPostListRes, error)
 }
+
+type IVoteService interface {
+	VotePost(c *gin.Context, req *dto.VotePostReq) error
+}

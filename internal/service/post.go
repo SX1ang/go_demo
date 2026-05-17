@@ -60,13 +60,20 @@ func (p *PostService) CreatePost(c *gin.Context, req *dto.CreatePostReq) error {
 
 	// 2.构造post model
 	postId := snowflake.GenID()
-	authorId := c.MustGet("UserId").(int64)
+	authorId, exists := c.Get("UserId")
+	if !exists {
+		zap.L().Error("UserId not exist")
+		return &util.CustomizedErr{
+			Code: e.UNAUTHORIZED,
+			Msg:  e.GetMsg(e.UNAUTHORIZED),
+		}
+	}
 
 	post := model.Post{
 		PostID:      postId,
 		Title:       req.Title,
 		Content:     req.Content,
-		AuthorID:    authorId,
+		AuthorID:    authorId.(int64),
 		CommunityID: req.CommunityID,
 		Status:      PostStatusPending, // 默认审核中
 		CreateTime:  time.Now(),

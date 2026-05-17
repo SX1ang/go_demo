@@ -30,4 +30,9 @@ type IPostRepo interface {
 	CreatePost(ctx context.Context, post *model.Post) error
 	GetPostDetail(ctx context.Context, postId int64) (*dto.PostDetail, error)
 	GetPostList(ctx context.Context, page, size int) ([]*dto.PostDetail, error)
+	PostIsExist(ctx context.Context, postId int64) (bool, error)
+}
+
+type IVoteRepo interface {
+	VotePost(ctx context.Context, userId, postId int64, vote int) error
 }

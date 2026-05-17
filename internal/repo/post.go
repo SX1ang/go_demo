@@ -8,8 +8,11 @@ import (
 	"demoProject/internal/e"
 	"demoProject/internal/infra"
 	"demoProject/pkg/util"
+	"errors"
+	"strconv"
 	"time"
 
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
@@ -28,23 +31,45 @@ type postDetailFlat struct {
 	CommUpdateTime time.Time `gorm:"column:comm_update_time"`
 }
 
-type MysqlPostRepository struct {
-	db *gorm.DB
+type PostRepository struct {
+	db     *gorm.DB
+	client *redis.Client
 }
 
-func NewMysqlPostRepository(res *infra.Resources) IPostRepo {
-	return &MysqlPostRepository{db: res.DB}
+func NewPostRepository(res *infra.Resources) IPostRepo {
+	return &PostRepository{
+		db:     res.DB,
+		client: res.Redis,
+	}
 }
 
-func (m *MysqlPostRepository) CreatePost(ctx context.Context, post *model.Post) error {
+func (m *PostRepository) CreatePost(ctx context.Context, post *model.Post) error {
 	err := query.Use(m.db).WithContext(ctx).Post.Create(post)
 	if err != nil {
 		return err
 	}
+
+	pipeline := m.client.TxPipeline()
+	postIdStr := strconv.FormatInt(post.PostID, 10)
+
+	pipeline.ZAdd(ctx, KeyPostTime, redis.Z{
+		Score:  float64(post.CreateTime.Unix()),
+		Member: postIdStr,
+	})
+	pipeline.ZAdd(ctx, KeyPostScore, redis.Z{
+		Score:  0,
+		Member: postIdStr,
+	})
+
+	_, err = pipeline.Exec(ctx)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
-func (m *MysqlPostRepository) GetPostDetail(ctx context.Context, postId int64) (*dto.PostDetail, error) {
+func (m *PostRepository) GetPostDetail(ctx context.Context, postId int64) (*dto.PostDetail, error) {
 
 	q := query.Use(m.db)
 	p := q.Post
@@ -102,7 +127,7 @@ func (m *MysqlPostRepository) GetPostDetail(ctx context.Context, postId int64) (
 	}, nil
 }
 
-func (m *MysqlPostRepository) GetPostList(ctx context.Context, page, size int) ([]*dto.PostDetail, error) {
+func (m *PostRepository) GetPostList(ctx context.Context, page, size int) ([]*dto.PostDetail, error) {
 	q := query.Use(m.db)
 	p := q.Post
 	u := q.User
@@ -153,4 +178,20 @@ func (m *MysqlPostRepository) GetPostList(ctx context.Context, page, size int) (
 		})
 	}
 	return posts, nil
+}
+
+func (m *PostRepository) PostIsExist(ctx context.Context, postId int64) (bool, error) {
+	q := query.Use(m.db)
+
+	_, err := q.WithContext(ctx).Post.Where(q.Post.PostID.Eq(postId)).First()
+
+	if err == nil {
+		return true, nil
+	}
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return false, nil
+	}
+
+	return false, err
 }

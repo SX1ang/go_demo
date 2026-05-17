@@ -98,7 +98,16 @@ func (u *UserHandler) LogoutHandler(c *gin.Context) {
 	// 获取参数和参数校验
 	var req = new(dto.LogoutReq)
 
-	req.UserId = c.MustGet("UserId").(int64)
+	userId, exists := c.Get("UserId")
+	if !exists {
+		zap.L().Error("UserId not exist")
+		c.JSON(http.StatusOK, util.JsonRsp(&util.CustomizedErr{
+			Code: e.UNAUTHORIZED,
+			Msg:  e.GetMsg(e.UNAUTHORIZED),
+		}))
+	}
+
+	req.UserId = userId.(int64)
 
 	// 注销逻辑处理
 	ctx := c.Request.Context()

@@ -12,17 +12,17 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-type MysqlSessionRepository struct {
+type SessionRepository struct {
 	db *gorm.DB
 }
 
-func NewMysqlSessionRepository(res *infra.Resources) ISessionRepo {
-	return &MysqlSessionRepository{
+func NewSessionRepository(res *infra.Resources) ISessionRepo {
+	return &SessionRepository{
 		db: res.DB,
 	}
 }
 
-func (m *MysqlSessionRepository) SaveSession(ctx context.Context, session *model.Session) error {
+func (m *SessionRepository) SaveSession(ctx context.Context, session *model.Session) error {
 	err := query.Use(m.db).
 		WithContext(ctx).
 		Session.
@@ -46,7 +46,7 @@ func (m *MysqlSessionRepository) SaveSession(ctx context.Context, session *model
 	return nil
 }
 
-func (m *MysqlSessionRepository) GetSession(ctx context.Context, sessionId string) (*model.Session, error) {
+func (m *SessionRepository) GetSession(ctx context.Context, sessionId string) (*model.Session, error) {
 	q := query.Use(m.db)
 	session, err := q.WithContext(ctx).Session.Where(q.Session.SessionID.Eq(sessionId)).First()
 	if err == nil {
@@ -61,7 +61,7 @@ func (m *MysqlSessionRepository) GetSession(ctx context.Context, sessionId strin
 
 }
 
-func (m *MysqlSessionRepository) DeleteSession(ctx context.Context, userId int64) error {
+func (m *SessionRepository) DeleteSession(ctx context.Context, userId int64) error {
 	q := query.Use(m.db)
 	result, err := q.WithContext(ctx).Session.Where(q.Session.UserID.Eq(userId)).Delete()
 
@@ -76,7 +76,7 @@ func (m *MysqlSessionRepository) DeleteSession(ctx context.Context, userId int64
 	return nil
 }
 
-func (m *MysqlSessionRepository) RevokeRefreshToken(ctx context.Context, userId int64) error {
+func (m *SessionRepository) RevokeRefreshToken(ctx context.Context, userId int64) error {
 	q := query.Use(m.db)
 	result, err := q.WithContext(ctx).Session.
 		Where(

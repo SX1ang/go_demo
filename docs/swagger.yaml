@@ -63,6 +63,20 @@ definitions:
     - re_password
     - username
     type: object
+  dto.VotePostReq:
+    properties:
+      post_id:
+        example: "0"
+        type: string
+      vote:
+        enum:
+        - -1
+        - 0
+        - 1
+        type: integer
+    required:
+    - post_id
+    type: object
   util.JsonResult:
     properties:
       code:
@@ -303,6 +317,29 @@ paths:
       summary: 用户注册
       tags:
       - User
+  /v1/votes:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 投票信息
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.VotePostReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.JsonResult'
+      security:
+      - BearerAuth: []
+      summary: 给帖子投票
+      tags:
+      - Vote
 securityDefinitions:
   BearerAuth:
     in: header

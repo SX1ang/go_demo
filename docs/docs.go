@@ -373,6 +373,44 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/v1/votes": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Vote"
+                ],
+                "summary": "给帖子投票",
+                "parameters": [
+                    {
+                        "description": "投票信息",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.VotePostReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/util.JsonResult"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -460,6 +498,26 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 32,
                     "minLength": 3
+                }
+            }
+        },
+        "dto.VotePostReq": {
+            "type": "object",
+            "required": [
+                "post_id"
+            ],
+            "properties": {
+                "post_id": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "vote": {
+                    "type": "integer",
+                    "enum": [
+                        -1,
+                        0,
+                        1
+                    ]
                 }
             }
         },

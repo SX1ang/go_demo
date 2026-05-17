@@ -43,8 +43,8 @@ func InitServer(configConfig *config.Config) (*app.Server, func(), error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	iUserRepo := repo.NewMysqlUserRepository(resources)
-	iSessionRepo := repo.NewMysqlSessionRepository(resources)
+	iUserRepo := repo.NewUserRepository(resources)
+	iSessionRepo := repo.NewSessionRepository(resources)
 	envConfig, err := config.InitEnvConfig()
 	if err != nil {
 		cleanup()
@@ -56,13 +56,16 @@ func InitServer(configConfig *config.Config) (*app.Server, func(), error) {
 	userHandler := api.NewUserHandler(iUserService)
 	iAuthService := service.NewAuthService(iSessionRepo, jwtMaker)
 	authHandler := api.NewAuthHandler(iAuthService)
-	iCommunityRepo := repo.NewMysqlCommunityRepository(resources)
+	iCommunityRepo := repo.NewCommunityRepository(resources)
 	iCommunityService := service.NewCommunityService(iCommunityRepo)
 	communityHandler := api.NewcommunityHandler(iCommunityService)
-	iPostRepo := repo.NewMysqlPostRepository(resources)
+	iPostRepo := repo.NewPostRepository(resources)
 	iPostService := service.NewPostService(iPostRepo, iCommunityRepo)
 	postHandler := api.NewPostHandler(iPostService)
-	router := app.NewRouter(configConfig, basicHandler, userHandler, authHandler, jwtMaker, communityHandler, postHandler)
+	iVoteRepo := repo.NewVoteRepository(resources)
+	iVoteService := service.NewVoteService(iVoteRepo, iPostRepo)
+	voteHandler := api.NewVoteHandler(iVoteService)
+	router := app.NewRouter(configConfig, basicHandler, userHandler, authHandler, jwtMaker, communityHandler, postHandler, voteHandler)
 	server := app.NewServer(engine, router, configConfig)
 	return server, func() {
 		cleanup()

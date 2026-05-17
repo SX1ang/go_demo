@@ -23,6 +23,7 @@ type Router struct {
 
 	community *api.CommunityHandler
 	post      *api.PostHandler
+	vote      *api.VoteHandler
 }
 
 func NewRouter(
@@ -33,6 +34,7 @@ func NewRouter(
 	tokenMaker *util.JWTMaker,
 	community *api.CommunityHandler,
 	post *api.PostHandler,
+	vote *api.VoteHandler,
 ) *Router {
 	return &Router{
 		cfg:        cfg,
@@ -43,6 +45,7 @@ func NewRouter(
 
 		community: community,
 		post:      post,
+		vote:      vote,
 	}
 }
 
@@ -103,5 +106,10 @@ func (r *Router) With(engine *gin.Engine) {
 		postGroup.GET("/:id", r.post.PostDetailHandler)
 
 		postGroup.GET("", r.post.PostListHandler)
+	}
+
+	voteGroup := versionGroup.Group("/votes", r.jwtMiddleware())
+	{
+		voteGroup.POST("", r.vote.VotePostHandler)
 	}
 }

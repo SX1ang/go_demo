@@ -16,6 +16,8 @@ var MsgFlags = map[int]string{
 	ERROR_NOT_EXIST_COMMUNITY: "社区不存在",
 
 	ERROR_NOT_EXIST_POST: "帖子不存在",
+
+	ERROR_VOTE_TIME_EXPIRED: "超过投票时间，无法投票",
 }
 
 func GetMsg(code int) string {

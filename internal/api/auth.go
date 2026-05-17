@@ -61,7 +61,16 @@ func (a *AuthHandler) RenewAccessTokenHandler(c *gin.Context) {
 // @Router /v1/tokens/revoke [post]
 func (a *AuthHandler) RevokeRefreshTokenHandler(c *gin.Context) {
 	var req = new(dto.RevokeRefreshTokenReq)
-	req.UserId = c.MustGet("UserId").(int64)
+	userId, exists := c.Get("UserId")
+	if !exists {
+		zap.L().Error("UserId not exist")
+		c.JSON(http.StatusOK, util.JsonRsp(&util.CustomizedErr{
+			Code: e.UNAUTHORIZED,
+			Msg:  e.GetMsg(e.UNAUTHORIZED),
+		}))
+	}
+
+	req.UserId = userId.(int64)
 
 	ctx := c.Request.Context()
 	err := a.authService.RevokeRefreshToken(ctx, req)
