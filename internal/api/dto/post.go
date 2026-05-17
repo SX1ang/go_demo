@@ -20,6 +20,7 @@ type PostDetail struct {
 	StatusText string    `json:"status_text"`
 	CreateTime time.Time `json:"create_time"` // 创建时间
 	UpdateTime time.Time `json:"update_time"` // 更新时间
+	VoteCount  int64     `json:"vote_count"`  // 帖子点赞数
 
 	AuthorName string          `json:"author_name"`
 	Community  CommunityDetail `json:"community"`
@@ -30,8 +31,9 @@ type GetPostDetailRes struct {
 }
 
 type GetPostListReq struct {
-	Page int `form:"page" binding:"required,min=1"`
-	Size int `form:"size" binding:"required,min=1,max=100"`
+	Page  int    `form:"page" binding:"required,min=1"`
+	Size  int    `form:"size" binding:"required,min=1,max=100"`
+	Order string `form:"order" binding:"omitempty,oneof=new hot"`
 }
 
 type GetPostListRes struct {

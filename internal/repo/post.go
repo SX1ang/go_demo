@@ -127,7 +127,7 @@ func (m *PostRepository) GetPostDetail(ctx context.Context, postId int64) (*dto.
 	}, nil
 }
 
-func (m *PostRepository) GetPostList(ctx context.Context, page, size int) ([]*dto.PostDetail, error) {
+func (m *PostRepository) GetPostList(ctx context.Context, ids []int64) ([]*dto.PostDetail, error) {
 	q := query.Use(m.db)
 	p := q.Post
 	u := q.User
@@ -151,8 +151,7 @@ func (m *PostRepository) GetPostList(ctx context.Context, page, size int) ([]*dt
 		).
 		LeftJoin(u, p.AuthorID.EqCol(u.UserID)).
 		LeftJoin(c, p.CommunityID.EqCol(c.CommunityID)).
-		Offset((page - 1) * size).
-		Limit(size).
+		Where(p.PostID.In(ids...)).
 		Scan(&flats)
 	if err != nil {
 		return nil, err
@@ -194,4 +193,18 @@ func (m *PostRepository) PostIsExist(ctx context.Context, postId int64) (bool, e
 	}
 
 	return false, err
+}
+
+func (m *PostRepository) GetPostIdsInOrder(ctx context.Context, page, size int, order string) ([]string, error) {
+	start := int64((page - 1) * size)
+	stop := start + int64(size-1)
+
+	// 从redis中获取所有帖子的id
+	if order == "new" {
+		// 按照时间排序
+		return m.client.ZRevRange(ctx, KeyPostTime, start, stop).Result()
+	} else {
+		// 按照热度分数排序
+		return m.client.ZRevRange(ctx, KeyPostScore, start, stop).Result()
+	}
 }

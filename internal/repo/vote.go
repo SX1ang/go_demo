@@ -93,3 +93,24 @@ func (r *VoteRepository) VotePost(ctx context.Context, userId, postId int64, vot
 	return nil
 
 }
+
+func (r *VoteRepository) GetPostsVoteCount(ctx context.Context, ids []int64) ([]int64, error) {
+	// 使用pipeline发送多条命令，减少redis连接次数
+	pipeline := r.client.TxPipeline()
+	for _, id := range ids {
+		// 统计赞成票的数量，用于前端展示
+		pipeline.ZCount(ctx, KeyPostVoted(id), "1", "1")
+	}
+
+	cmders, err := pipeline.Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	counts := make([]int64, 0, len(cmders))
+	for _, cmder := range cmders {
+		counts = append(counts, cmder.(*redis.IntCmd).Val())
+	}
+
+	return counts, nil
+}

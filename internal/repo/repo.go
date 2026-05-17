@@ -29,10 +29,12 @@ type ICommunityRepo interface {
 type IPostRepo interface {
 	CreatePost(ctx context.Context, post *model.Post) error
 	GetPostDetail(ctx context.Context, postId int64) (*dto.PostDetail, error)
-	GetPostList(ctx context.Context, page, size int) ([]*dto.PostDetail, error)
+	GetPostList(ctx context.Context, ids []int64) ([]*dto.PostDetail, error)
 	PostIsExist(ctx context.Context, postId int64) (bool, error)
+	GetPostIdsInOrder(ctx context.Context, page, size int, order string) ([]string, error)
 }
 
 type IVoteRepo interface {
 	VotePost(ctx context.Context, userId, postId int64, vote int) error
+	GetPostsVoteCount(ctx context.Context, ids []int64) ([]int64, error)
 }

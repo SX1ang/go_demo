@@ -125,6 +125,11 @@ func (p *PostHandler) PostListHandler(c *gin.Context) {
 		return
 	}
 
+	// 默认按照时间排序
+	if req.Order == "" {
+		req.Order = "new"
+	}
+
 	postList, err := p.postService.GetPostList(c, &req)
 	if err != nil {
 		c.JSON(http.StatusOK, util.JsonRsp(&util.CustomizedErr{
