@@ -157,9 +157,10 @@ func (m *PostRepository) GetPostList(ctx context.Context, ids []int64) ([]*dto.P
 		return nil, err
 	}
 
-	posts := make([]*dto.PostDetail, 0, len(flats))
+	// sql查询返回的帖子顺序和ids中的顺序不同
+	postMap := make(map[int64]*dto.PostDetail, len(flats))
 	for _, flat := range flats {
-		posts = append(posts, &dto.PostDetail{
+		postMap[flat.PostID] = &dto.PostDetail{
 			ID:         flat.PostID,
 			Title:      flat.Title,
 			Content:    flat.Content,
@@ -174,8 +175,16 @@ func (m *PostRepository) GetPostList(ctx context.Context, ids []int64) ([]*dto.P
 				CreateTime:   flat.CommCreateTime,
 				UpdateTime:   flat.CommUpdateTime,
 			},
-		})
+		}
 	}
+
+	posts := make([]*dto.PostDetail, 0, len(flats))
+	for _, id := range ids {
+		if post, ok := postMap[id]; ok {
+			posts = append(posts, post)
+		}
+	}
+
 	return posts, nil
 }
 
