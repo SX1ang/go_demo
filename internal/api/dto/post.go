@@ -31,9 +31,10 @@ type GetPostDetailRes struct {
 }
 
 type GetPostListReq struct {
-	Page  int    `form:"page" binding:"required,min=1"`
-	Size  int    `form:"size" binding:"required,min=1,max=100"`
-	Order string `form:"order" binding:"omitempty,oneof=new hot"`
+	Page        int    `form:"page" binding:"required,min=1"`
+	Size        int    `form:"size" binding:"required,min=1,max=100"`
+	Order       string `form:"order" binding:"omitempty,oneof=new hot"`
+	CommunityID int64  `form:"community_id" binding:"omitempty,min=1"`
 }
 
 type GetPostListRes struct {

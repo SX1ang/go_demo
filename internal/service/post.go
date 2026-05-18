@@ -120,9 +120,18 @@ func (p *PostService) GetPostList(c *gin.Context, req *dto.GetPostListReq) (*dto
 	page := req.Page
 	size := req.Size
 	order := req.Order
+	community_id := req.CommunityID
 
 	// 按照page, size, order获取所有帖子的id
-	ids, err := p.postRepo.GetPostIdsInOrder(c, page, size, order)
+	var ids []string
+	var err error
+	if community_id == 0 {
+		ids, err = p.postRepo.GetPostIdsInOrder(c, page, size, order)
+	} else {
+		// 帖子按照community分类
+		ids, err = p.postRepo.GetPostIdsInOrderByCommunity(c, page, size, order, community_id)
+	}
+
 	if err != nil {
 		zap.L().Error("postRepo.GetPostIdsInOrder error", zap.Error(err))
 		return nil, err
@@ -154,6 +163,7 @@ func (p *PostService) GetPostList(c *gin.Context, req *dto.GetPostListReq) (*dto
 
 	for idx, post := range postList {
 		post.VoteCount = counts[idx]
+		post.StatusText = PostStatusToText(post.Status)
 	}
 
 	return &dto.GetPostListRes{

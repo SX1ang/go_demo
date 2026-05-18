@@ -9,12 +9,17 @@ import (
 	"demoProject/internal/infra"
 	"demoProject/pkg/util"
 	"errors"
+	"fmt"
 	"strconv"
 	"time"
 
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
+
+func KeyCommunity(communityId int64) string {
+	return fmt.Sprintf("demo:community:%d", communityId) // 社区关联的帖子
+}
 
 type postDetailFlat struct {
 	PostID         int64     `gorm:"column:post_id"`
@@ -60,6 +65,9 @@ func (m *PostRepository) CreatePost(ctx context.Context, post *model.Post) error
 		Score:  0,
 		Member: postIdStr,
 	})
+
+	// 将帖子的ID保存到社区community的set中
+	pipeline.SAdd(ctx, KeyCommunity(post.CommunityID), strconv.FormatInt(post.PostID, 10))
 
 	_, err = pipeline.Exec(ctx)
 	if err != nil {
@@ -208,12 +216,48 @@ func (m *PostRepository) GetPostIdsInOrder(ctx context.Context, page, size int, 
 	start := int64((page - 1) * size)
 	stop := start + int64(size-1)
 
-	// 从redis中获取所有帖子的id
+	orderKey := KeyPostScore
 	if order == "new" {
-		// 按照时间排序
-		return m.client.ZRevRange(ctx, KeyPostTime, start, stop).Result()
-	} else {
-		// 按照热度分数排序
-		return m.client.ZRevRange(ctx, KeyPostScore, start, stop).Result()
+		orderKey = KeyPostTime
 	}
+
+	return m.client.ZRevRange(ctx, orderKey, start, stop).Result()
+
+}
+
+func (m *PostRepository) GetPostIdsInOrderByCommunity(ctx context.Context, page, size int, order string, communityId int64) ([]string, error) {
+	start := int64((page - 1) * size)
+	stop := start + int64(size-1)
+
+	orderKey := KeyPostScore
+	if order == "new" {
+		orderKey = KeyPostTime
+	}
+
+	// 利用缓存key减少ZInterStore的执行次数
+	cacheCommunityKey := order + "_" + strconv.FormatInt(communityId, 10)
+	exists, err := m.client.Exists(ctx, cacheCommunityKey).Result()
+	if err != nil {
+		return nil, err
+	}
+
+	if exists == 0 {
+		// key 不存在
+		pipeline := m.client.Pipeline()
+		pipeline.ZInterStore(ctx, cacheCommunityKey, &redis.ZStore{
+			Keys:      []string{KeyCommunity(communityId), orderKey},
+			Aggregate: "MAX",
+		})
+		pipeline.Expire(ctx, cacheCommunityKey, 60*time.Second) // 设置超时时间
+
+		_, err = pipeline.Exec(ctx)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// 从redis中获取所有帖子的id
+	// 按照时间/热度排序
+	return m.client.ZRevRange(ctx, cacheCommunityKey, start, stop).Result()
+
 }

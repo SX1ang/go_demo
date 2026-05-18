@@ -32,6 +32,7 @@ type IPostRepo interface {
 	GetPostList(ctx context.Context, ids []int64) ([]*dto.PostDetail, error)
 	PostIsExist(ctx context.Context, postId int64) (bool, error)
 	GetPostIdsInOrder(ctx context.Context, page, size int, order string) ([]string, error)
+	GetPostIdsInOrderByCommunity(ctx context.Context, page, size int, order string, communityId int64) ([]string, error)
 }
 
 type IVoteRepo interface {
